@@ -1,0 +1,23 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: cimg/node:lts
+        environment:
+          NODE_ENV: production
+      - image: circleci/postgres:9.6
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: password ### 定義しないとエラーになる
+    steps:
+      - run:
+          name: プライマリイメージで定義された環境変数を利用する
+          command: echo "NODE_ENV is '${NODE_ENV}'"
+      - run:
+          name: ステップで同名の環境変数を定義すると上書きされる
+          environment:
+            NODE_ENV: test
+          command: echo "NODE_ENV is '${NODE_ENV}'"
+      - run:
+          name: サービスイメージの環境変数はステップでは利用できない
+          command: echo "POSTGRES_USER is '${POSTGRES_USER}'"
